@@ -1,4 +1,4 @@
 superset/
-.env/
+.venv/
 __pycache__/
 api_key.py

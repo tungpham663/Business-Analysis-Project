@@ -59,91 +59,114 @@ def extract(text, model=MODEL, temperature=0.1, max_tokens=2000):
         },
         {
             "role": "user",
-            "content": (
-                "Entity and Relationship Extraction Task\n"
-                "### Objective\n"
-                "Your task is to extract entities, their relationships, and classify relationships into short-term or long-term events.\n\n"
-                "For short-term relationships, include a separate time field extracted from the article (e.g., specific dates, months, quarters). "
-                "Use normalized relationship names and include the exact sentence from the article as the description.\n\n"
-                "### Instructions\n"
-                "**Input**\n"
-                "A financial article provided in text format focused on blockchain and related financial topics.\n\n"
-                "**Output**\n"
-                "The output must include three structured sections:\n\n"
-                "1. **Entities**: A list of entities involved in at least one valid relationship.\n"
-                "2. **Relationships**: Relationships between entities with normalized relationship names, an exact sentence, and an additional time field for short-term events.\n"
-                "3. **Classification**: Each relationship is labeled as short-term or long-term (without any explaination).\n\n"
-                "### Extraction Requirements\n"
-                "1. **Entities**\n"
-                "You can only extract entities only if they are part of a valid relationship. If an entity is not a part of a valid relationship, you can not list it in entities list. You only extract entitities which are one of the following types:\n\n"
-                "| Entity Type        | Examples                          |\n"
-                "|--------------------|-----------------------------------|\n"
-                "| Cryptocurrencies   | Bitcoin (BTC), Ethereum (ETH), Solana (SOL)         |\n"
-                "| Companies          | Binance, Coinbase, BlackRock      |\n"
-                "| Individuals        | Elon Musk, Vitalik Buterin        |\n"
-                "| Countries          | Korea, Japan, United State of America (USA)                      |\n"
-                "| Technologies       | Layer-2 solutions, Lightning Network, Stacks |\n"
-                "| Market Terms       | Market cap, BTC ETFs, DeFi TVL    |\n\n"
-                "The name of the entity must be the full name followed by the short name in parentheses. For example, \"Bitcoin (BTC)\".\n\n"
-                "### Output Format for Entities:\n"
-                "Entities:\n"
-                "- Entity Name: <Full Name (Short name)>\n"
-                "  Entity Type: <Entity Type>\n\n"
-                "2. **Relationships**\n"
-                "A valid relationship must meet the following conditions:\n\n"
-                "- **Direct Interaction**: The sentence must describe an explicit or meaningful interaction between two entities.\n"
-                "- **Normalized Relationship Names**: Use clear, standardized phrases for the relationship names (e.g., \"support,\" \"enhance scalability for,\" \"introduce\"). "
-                "Avoid vague or generic verbs like \"was,\" \"had,\" or \"underwent.\"\n"
-                "- **Short-Term Relationships**: If the event is short-term (spanning days, weeks, or months), extract and include the time data.\n"
-                "- **Long-Term Relationships**: Events that span multiple years, are ongoing, or if no specific time frame is given.\n\n"
-                "### Classification\n"
-                "Label each relationship as short-term or long-term.\n\n"
-                "### Output Format for Relationships:\n"
-                "Relationships:\n"
-                "- Relationship: <Normalized Relationship Name>\n"
-                "  Description: \"<Exact sentence from the article>\"\n"
-                "  Entities: <Entity A>, <Entity B>\n"
-                "  Classification: <Short-term | Long-term>\n"
-                "### Output Example\n"
-                "**Input Sentence**:\n"
-                "\"BlackRock announced in January 2024 that it supports Bitcoin by investing heavily in BTC ETFs. "
-                "The Lightning Network has been enhancing Bitcoin’s scalability for years.\"\n\n"
-                "**Expected Output**:\n"
-                "Entities:\n"
-                "- Entity Name: BlackRock\n"
-                "  Entity Type: Company\n\n"
-                "- Entity Name: Bitcoin (BTC)\n"
-                "  Entity Type: Cryptocurrency\n\n"
-                "- Entity Name: Lightning Network\n"
-                "  Entity Type: Technology\n\n"
-                "- Entity Name: BTC ETFs\n"
-                "  Entity Type: Market Terms\n\n"
-                "Relationships:\n"
-                "- Relationship: support\n"
-                "  Description: \"BlackRock announced in January 2024 that it supports Bitcoin by investing heavily in BTC ETFs.\"\n"
-                "  Entities: BlackRock, Bitcoin\n"
-                "  Classification: Short-term\n"
-                "- Relationship: enhance scalability for\n"
-                "  Description: \"The Lightning Network has been enhancing Bitcoin’s scalability for years.\"\n"
-                "  Entities: Lightning Network, Bitcoin\n"
-                "  Classification: Long-term\n"
-                "### Key Rules\n"
-                "- **Short-term Relationships**: Events with specific time data (e.g., dates, months, or quarters) are classified as short-term.\n"
-                "- **Long-term Relationships**: Events spanning multiple years or described as ongoing are classified as long-term.\n"
-                "- **Normalized Relationship Names**: Use consistent, meaningful phrases for relationship names (e.g., \"support,\" \"introduce,\" \"enhance scalability for\").\n"
-                "- **Exact Sentence**: Include the exact sentence from the article as the description.\n"
-                "- **Filter Entities**: Only include entities that are part of a valid relationship.\n"
-                "- **Split Relationships**: If multiple entities share the same relationship, split them into individual pairs.\n\n"
-                "### Invalid Examples\n"
-                "1. **No Direct Interaction**:\n"
-                "\"Both Bitcoin and Ethereum underwent significant changes.\"\n"
-                "Reason: No explicit interaction between Bitcoin and Ethereum.\n\n"
-                "2. **Vague Relationships**:\n"
-                "\"BlackRock and Fidelity are big fans of Bitcoin.\"\n"
-                "Reason: \"Being fans\" does not establish a meaningful relationship.\n\n"
-                "Now, process the following input data and provide the output in the required format:\n"
-                f"{text}"
-                )
+            "content": f"""
+                Entity and Relationship Extraction Task  
+                ### Objective  
+                Your task is to extract entities, their relationships, and classify relationships into short-term or long-term events.  
+
+                For short-term relationships, include a separate time field extracted from the article (e.g., specific dates, months, quarters).  
+                Use normalized relationship names and include the exact sentence from the article as the description.  
+
+                ### Instructions  
+                **Input**  
+                A financial article provided in text format focused on blockchain and related financial topics.  
+
+                **Output**  
+                The output must include three structured sections:  
+
+                1. **Entities**: A list of entities involved in at least one valid relationship.  
+                2. **Relationships**: Relationships between entities with normalized relationship names, an exact sentence, and an additional time field for short-term events.  
+                3. **Classification**: Each relationship is labeled as short-term or long-term (without any explanation).  
+
+                ### Extraction Requirements  
+                1. **Entities**  
+                You can only extract entities if they are part of a valid relationship. If an entity is not part of a valid relationship, you cannot list it in the entities list. You only extract entities which are one of the following types:  
+
+                | Entity Type        | Examples                          |  
+                |--------------------|-----------------------------------|  
+                | Cryptocurrencies   | Bitcoin, Ethereum, Solana         |  
+                | Companies          | Binance, Coinbase, BlackRock      |  
+                | Individuals        | Elon Musk, Vitalik Buterin        |  
+                | Countries          | Korea, Japan, United States       |  
+                | Technologies       | Layer-2 solutions, Lightning Network, Stacks |  
+                | Market Terms       | Market cap, Bitcoin ETFs, DeFi TVL    |  
+
+                The name of the entity must always be the full name. Abbreviations, short forms, or mixed formats (e.g., BTC, Bitcoin (BTC)) are not allowed. For example, use "Bitcoin" instead of "BTC" or "Bitcoin (BTC), "Ethereum" instead of "ETH" or "Ethereum (ETH)", "Solana" instead of "Solana" or "Solana (SOL)".
+
+                ### Output Format for Entities:  
+                Entities:  
+                - Entity Name: <Full Name>  
+                Entity Type: <Entity Type>  
+
+                2. **Relationships**  
+                A valid relationship must meet the following conditions:  
+
+                - **Direct Interaction**: The sentence must describe an explicit or meaningful interaction between two entities.  
+                - **Normalized Relationship Names**: Use clear, standardized phrases for the relationship names (e.g., "support," "enhance scalability for," "introduce").  
+                Avoid vague or generic verbs like "was," "had," or "underwent."  
+                - **Short-Term Relationships**: If the event is short-term (spanning days, weeks, or months), extract and include the time data.  
+                - **Long-Term Relationships**: Events that span multiple years, are ongoing, or if no specific time frame is given.  
+
+                ### Classification  
+                Label each relationship as short-term or long-term.  
+
+                ### Output Format for Relationships:  
+                Relationships:  
+                - Relationship: <Normalized Relationship Name>  
+                Description: "<Exact sentence from the article>"  
+                Entities: <Entity A>, <Entity B>  
+                Classification: <Short-term | Long-term>  
+
+                ### Output Example  
+                **Input Sentence**:  
+                "BlackRock announced in January 2024 that it supports Bitcoin by investing heavily in BTC ETFs.  
+                The Lightning Network has been enhancing Bitcoin’s scalability for years."  
+
+                **Expected Output**:  
+                Entities:  
+                - Entity Name: BlackRock  
+                Entity Type: Company  
+
+                - Entity Name: Bitcoin  
+                Entity Type: Cryptocurrency  
+
+                - Entity Name: Lightning Network  
+                Entity Type: Technology  
+
+                - Entity Name: Bitcoin ETFs  
+                Entity Type: Market Terms  
+
+                Relationships:  
+                - Relationship: support  
+                Description: "BlackRock announced in January 2024 that it supports Bitcoin by investing heavily in BTC ETFs."  
+                Entities: BlackRock, Bitcoin  
+                Classification: Short-term  
+
+                - Relationship: enhance scalability for  
+                Description: "The Lightning Network has been enhancing Bitcoin’s scalability for years."  
+                Entities: Lightning Network, Bitcoin  
+                Classification: Long-term  
+
+                ### Key Rules  
+                - **Short-term Relationships**: Events with specific time data (e.g., dates, months, or quarters) are classified as short-term.  
+                - **Long-term Relationships**: Events spanning multiple years or described as ongoing are classified as long-term.  
+                - **Normalized Relationship Names**: Use consistent, meaningful phrases for relationship names (e.g., "support," "introduce," "enhance scalability for").  
+                - **Exact Sentence**: Include the exact sentence from the article as the description.  
+                - **Filter Entities**: Only include entities that are part of a valid relationship.  
+                - **Split Relationships**: If multiple entities share the same relationship, split them into individual pairs.  
+
+                ### Remove all invalid relationships:  
+                1. **No Direct Interaction**:  
+                "Both Bitcoin and Ethereum underwent significant changes."  
+                Reason: No direct and explicit interaction between Bitcoin and Ethereum.  
+
+                2. **Vague Relationships**:  
+                "BlackRock and Fidelity are big fans of Bitcoin."  
+                Reason: "Being fans" does not establish a meaningful relationship.  
+
+                Now, process the following input data and provide the output in the required format:  
+                {text}
+                """
             }
         ],
         model=model,
