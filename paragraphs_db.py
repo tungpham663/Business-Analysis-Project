@@ -119,7 +119,7 @@ def search_samples_by_keyword(keyword):
     if results:
         return random.choice(results)['content']
     else:
-        return {"message": "No results found for the given keyword."}
+        return ''
     
 def check_keyword_in_db(keyword):
     """

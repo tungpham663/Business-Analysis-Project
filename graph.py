@@ -1,5 +1,4 @@
 from neo4j import GraphDatabase
-from datetime import datetime
 from utils import calculate_months_difference
 
 

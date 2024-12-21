@@ -5,7 +5,7 @@ from get_input_data import get_input_data
 
 #API key for Groq
 client = Groq(api_key=API_KEY)
-MODEL = "llama-3.1-8b-instant"
+MODEL = "llama-3.3-70b-versatile"
 
 #post type and their descriptions
 post_types={1: "News articles announcing fluctuations, shocking news, or positive news related to blockchain (exchange/crypto, token, DeFi, NFT)",
@@ -16,10 +16,7 @@ post_types={1: "News articles announcing fluctuations, shocking news, or positiv
 
 
 def gen_1(keywords, paragraph="", relationships=[], model=MODEL, temperature=0.3, max_tokens=2000):
-    for keyword in keywords:
-        para, relations = get_input_data(keyword)
-        paragraph += para
-        relationships += relations
+    paragraph, relationships = get_input_data(keywords)
     chat_completion = client.chat.completions.create(
         messages=[
             {
@@ -34,7 +31,7 @@ You are an advanced content generator specializing in creating engaging news art
 ---
 
 ### **Input**:
-- **Keyword**: {keyword}
+- **Keyword**: {keywords}
 - **Paragraph**: {paragraph if paragraph else "None"}
 - **Relationships**: 
 {relationships if relationships else "None"}
@@ -62,10 +59,7 @@ You are an advanced content generator specializing in creating engaging news art
     return chat_completion.choices[0].message.content
 
 def gen_2(keywords, paragraph="", relationships=[], model=MODEL, temperature=0.3, max_tokens=2000):
-    for keyword in keywords:
-        para, relations = get_input_data(keyword)
-        paragraph += para
-        relationships += relations
+    paragraph, relationships = get_input_data(keywords)
     chat_completion = client.chat.completions.create(
         messages=[
             {
@@ -80,7 +74,7 @@ Your task is to write an **analytical article**, forecast, or insight report foc
 ---
 
 ### **Input**:
-- **Keyword**: {keyword}
+- **Keyword**: {keywords}
 - **Paragraph**: {paragraph if paragraph else "None"}
 - **Relationships**: 
 {relationships if relationships else "None"}
@@ -111,10 +105,7 @@ Your task is to write an **analytical article**, forecast, or insight report foc
     return chat_completion.choices[0].message.content
 
 def gen_3(keywords, paragraph="", relationships=[], model=MODEL, temperature=0.3, max_tokens=2000):
-    for keyword in keywords:
-        para, relations = get_input_data(keyword)
-        paragraph += para
-        relationships += relations
+    paragraph, relationships = get_input_data(keywords)
 
     chat_completion = client.chat.completions.create(
         messages=[
@@ -128,7 +119,7 @@ def gen_3(keywords, paragraph="", relationships=[], model=MODEL, temperature=0.3
 Your task is to write a **blockchain tutorial** or **knowledge-sharing article** that explains blockchain concepts, tools, or technologies in an engaging and easy-to-follow manner.
 
 ### **Input**:
-- **Keyword**: {keyword}
+- **Keyword**: {keywords}
 - **Paragraph**: {paragraph if paragraph else "None"}
 - **Relationships**: 
 {relationships if relationships else "None"}
@@ -159,11 +150,8 @@ Your task is to write a **blockchain tutorial** or **knowledge-sharing article**
     return chat_completion.choices[0].message.content
 
 def gen_4(keywords, paragraph="", relationships=[], model=MODEL, temperature=0.3, max_tokens=2000):
-    for keyword in keywords:
-        para, relations = get_input_data(keyword)
-        paragraph += para
-        relationships += relations
     
+    paragraph, relationships = get_input_data(keywords)
     chat_completion = client.chat.completions.create(
         messages=[
             {
@@ -178,7 +166,7 @@ You are a skilled marketing content writer specializing in creating compelling p
 ---
 
 ### **Input**:
-- **Keyword**: {keyword}
+- **Keyword**: {keywords}
 - **Paragraph**: {paragraph if paragraph else "None"}
 - **Relationships**: 
 {relationships if relationships else "None"}
@@ -209,11 +197,8 @@ You are a skilled marketing content writer specializing in creating compelling p
 
     return chat_completion.choices[0].message.content
 
-def gen_5(keywords, paragraph="", relationships=[], model=MODEL, temperature=0.3, max_tokens=2000):
-    for keyword in keywords:
-        para, relations = get_input_data(keyword)
-        paragraph += para
-        relationships += relations
+def gen_5(keywords, model=MODEL, temperature=0.3, max_tokens=2000):
+    paragraph, relationships = get_input_data(keywords)
 
     chat_completion = client.chat.completions.create(
         messages=[
@@ -229,7 +214,7 @@ You are a creative content strategist specializing in designing engaging interac
 ---
 
 ### **Input**:
-- **Keyword**: {keyword}
+- **Keyword**: {keywords}
 - **Paragraph**: {paragraph if paragraph else "None"}
 - **Relationships**: 
 {relationships if relationships else "None"}
