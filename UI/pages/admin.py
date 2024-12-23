@@ -10,12 +10,12 @@ from get_input_data import get_input_data
 from eval import eval
 
 # Initialize session state
-if "selected_post_type" not in st.session_state:
-    st.session_state.selected_post_type = 1
-if "generated_post" not in st.session_state:
-    st.session_state.generated_post = ""
-if "posts_generated" not in st.session_state:
-    st.session_state.posts_generated = False
+if "admin_selected_post_type" not in st.session_state:
+    st.session_state.admin_selected_post_type = 1
+if "admin_generated_post" not in st.session_state:
+    st.session_state.admin_generated_post = ""
+if "admin_posts_generated" not in st.session_state:
+    st.session_state.admin_posts_generated = False
 
 # Title and input field
 st.title("Post Suggestions for Blockchain Content Creators")
@@ -58,7 +58,7 @@ cols = st.columns(5)
 for i, (post_id, description) in enumerate(post_types.items()):
     with cols[i]:
         if st.button(f"Post Type {post_id}", key=f"post_type_{post_id}"):
-            st.session_state.selected_post_type = post_id
+            st.session_state.admin_selected_post_type = post_id
 
 st.write("### Submit your choice:")
 
@@ -66,22 +66,22 @@ st.write("### Submit your choice:")
 if st.button("Generate Post"):
     if keywords:
         with st.spinner("Generating post..."):
-            st.session_state.generated_post = generation(
-                st.session_state.selected_post_type, keywords
+            st.session_state.admin_generated_post = generation(
+                st.session_state.admin_selected_post_type, keywords
             )
-            st.session_state.posts_generated = True
+            st.session_state.admin_posts_generated = True
         paragraphs, relations = get_input_data(keywords)
         input_data = {"paragraphs": paragraphs, "relationships": relations}
-        eval_result = eval(st.session_state.generated_post, query, input_data)
+        eval_result = eval(st.session_state.admin_generated_post, query, input_data)
     else:
         st.warning("Please enter a keyword before generating a post!")
 
 
 # Display generated post
-if st.session_state.posts_generated:
-    selected_description = post_types[st.session_state.selected_post_type]
-    st.write(f"### Generated Post: Post Type {st.session_state.selected_post_type}")
+if st.session_state.admin_posts_generated:
+    selected_description = post_types[st.session_state.admin_selected_post_type]
+    st.write(f"### Generated Post: Post Type {st.session_state.admin_selected_post_type}")
     st.write(selected_description)
-    st.write(st.session_state.generated_post)
+    st.write(st.session_state.admin_generated_post)
     st.write("### Evaluation:")
     st.write(eval_result)

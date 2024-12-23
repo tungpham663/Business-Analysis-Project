@@ -8,12 +8,22 @@ from Generation.generation import generation
 from process_query import process_query
 
 # Initialize session state
-if "selected_post_type" not in st.session_state:
-    st.session_state.selected_post_type = 1
-if "generated_post" not in st.session_state:
-    st.session_state.generated_post = ""
-if "posts_generated" not in st.session_state:
-    st.session_state.posts_generated = False
+if "user_selected_post_type" not in st.session_state:
+    st.session_state.user_selected_post_type = 1
+if "user_generated_post" not in st.session_state:
+    st.session_state.user_generated_post = ""
+if "user_posts_generated" not in st.session_state:
+    st.session_state.user_posts_generated = False
+if "stats" not in st.session_state:
+    st.session_state.stats = {"total_regenerations": 0, "total_likes": 0, "total_dislikes": 0}
+if "last_keyword" not in st.session_state:
+    st.session_state.last_keyword = None
+if "last_post_type" not in st.session_state:
+    st.session_state.last_post_type = None
+
+def update_stats(stat_type):
+    if stat_type in st.session_state.stats:
+        st.session_state.stats[stat_type] += 1
 
 # Title and input field
 st.title("Post Suggestions for Blockchain Content Creators")
@@ -56,7 +66,7 @@ cols = st.columns(5)
 for i, (post_id, description) in enumerate(post_types.items()):
     with cols[i]:
         if st.button(f"Post Type {post_id}", key=f"post_type_{post_id}"):
-            st.session_state.selected_post_type = post_id
+            st.session_state.user_selected_post_type = post_id
 
 st.write("### Submit your choice:")
 
@@ -64,16 +74,48 @@ st.write("### Submit your choice:")
 if st.button("Generate Post"):
     if keyword:
         with st.spinner("Generating post..."):
-            st.session_state.generated_post = generation(
-                st.session_state.selected_post_type, keyword
+            # Check if keyword and post type are the same as before
+            if (st.session_state.last_keyword == input
+                and st.session_state.last_post_type == st.session_state.user_selected_post_type
+            ):
+                # Increment total regenerations if it's the same
+                update_stats("total_regenerations")
+            else:
+                # Update last keyword and post type
+                st.session_state.last_keyword = input
+                st.session_state.last_post_type = st.session_state.user_selected_post_type
+
+            st.session_state.user_generated_post = generation(
+                st.session_state.user_selected_post_type, keyword
             )
-            st.session_state.posts_generated = True
+            st.session_state.user_posts_generated = True
     else:
         st.warning("Please enter a keyword before generating a post!")
 
 # Display generated post
-if st.session_state.posts_generated:
-    selected_description = post_types[st.session_state.selected_post_type]
-    st.write(f"### Generated Post: Post Type {st.session_state.selected_post_type}")
+if st.session_state.user_posts_generated:
+    selected_description = post_types[st.session_state.user_selected_post_type]
+    st.write(f"### Generated Post: Post Type {st.session_state.user_selected_post_type}")
     st.write(selected_description)
-    st.write(st.session_state.generated_post)
+    st.write(st.session_state.user_generated_post)
+
+     # Like/Dislike Buttons
+    st.write("### Do you like this post?")
+    if "user_feedback" not in st.session_state:
+        st.session_state.user_feedback = None
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("👍 Like", key="like_button"):
+            st.session_state.user_feedback= "liked"
+            update_stats("total_likes")
+            st.success("You liked the post!")
+
+    with col2:
+        if st.button("👎 Dislike", key="dislike_button"):
+            st.session_state.user_feedback= "disliked"
+            update_stats("total_dislikes")
+            st.error("You disliked the post!")
+
+    if st.session_state.user_feedback:
+        st.write(f"Feedback recorded: {st.session_state.user_feedback}")
